@@ -1,0 +1,71 @@
+{
+    "name": "koh/sylius-a2a",
+    "description": "Publishes an A2A Agent Card at /.well-known/agent-card.json, built from the shop's registered agent skills.",
+    "type": "sylius-bundle",
+    "license": "MIT",
+    "keywords": [
+        "sylius",
+        "a2a",
+        "agent-card",
+        "agent",
+        "ai"
+    ],
+    "authors": [
+        {
+            "name": "Kai Ole Hartwig",
+            "email": "mail@ole-hartwig.eu"
+        }
+    ],
+    "homepage": "https://ole-hartwig.eu/open-source/sylius-agent-ready",
+    "support": {
+        "issues": "https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-a2a/-/issues",
+        "source": "https://github.com/ole-hartwig/sylius-a2a"
+    },
+    "require": {
+        "koh/sylius-agent-contracts": "^1.1",
+        "php": "^8.2",
+        "sylius/sylius": "^2.0",
+        "symfony/config": "^7.4 || ^8.0",
+        "symfony/dependency-injection": "^7.4 || ^8.0",
+        "symfony/http-foundation": "^7.4 || ^8.0",
+        "symfony/http-kernel": "^7.4 || ^8.0",
+        "symfony/routing": "^7.4 || ^8.0"
+    },
+    "require-dev": {
+        "phpstan/extension-installer": "^1.4",
+        "phpstan/phpstan": "^2.0",
+        "phpunit/phpunit": "^11.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Koh\\SyliusA2a\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Koh\\SyliusA2a\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-main": "1.0-dev"
+        }
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "phpstan/extension-installer": true
+        }
+    },
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://git.ole-hartwig.eu/api/v4/group/1091/-/packages/composer/packages.json",
+            "only": [
+                "koh/*"
+            ]
+        }
+    ],
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}

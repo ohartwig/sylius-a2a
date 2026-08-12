@@ -1,3 +1,13 @@
+## [1.1.4](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-a2a/compare/v1.1.3...v1.1.4) (2026-08-12)
+
+### :bug: Fixes
+
+* **deps:** update dependency sylius/sylius to ^2.0.18 [security] ([f2d515b](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-a2a/commit/f2d515bfacb0bf9e89a895a5a7496fdbeedb7cdd))
+
+### :repeat: Chores
+
+* **deps:** update dependency phpunit/phpunit to ^11.5.50 [security] ([c0eccbf](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-a2a/commit/c0eccbf90890c85918f2168a23e5966ad551b247))
+
 ## [1.1.3](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-a2a/compare/v1.1.2...v1.1.3) (2026-08-03)
 
 ### :repeat: Chores

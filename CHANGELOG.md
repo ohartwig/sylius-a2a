@@ -1,3 +1,9 @@
+## [1.1.5](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-a2a/compare/v1.1.4...v1.1.5) (2026-08-14)
+
+### :bug: Fixes
+
+* allow the infection extension installer plugin ([35185df](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-a2a/commit/35185df8d65f37441cd3dec09dd44adbf85417ce))
+
 ## [1.1.4](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-a2a/compare/v1.1.3...v1.1.4) (2026-08-12)
 
 ### :bug: Fixes

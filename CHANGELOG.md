@@ -1,3 +1,9 @@
+## [1.1.8](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-a2a/compare/v1.1.7...v1.1.8) (2026-08-15)
+
+### :bug: Fixes
+
+* **deps:** update dependency php to ^8.5.9 ([0dfc4b9](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-a2a/commit/0dfc4b9ea5d7717fe1b35e4375fb914a4c11bce9))
+
 ## [1.1.7](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-a2a/compare/v1.1.6...v1.1.7) (2026-08-15)
 
 ### :repeat: Chores

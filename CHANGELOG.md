@@ -1,3 +1,9 @@
+## [1.1.7](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-a2a/compare/v1.1.6...v1.1.7) (2026-08-15)
+
+### :repeat: Chores
+
+* **deps:** update dependency phpunit/phpunit to ^11.5.56 ([b045f35](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-a2a/commit/b045f35b917bb63943d81285c58cb76e098971f7))
+
 ## [1.1.6](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-a2a/compare/v1.1.5...v1.1.6) (2026-08-15)
 
 ### :white_check_mark: Tests

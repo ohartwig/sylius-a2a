@@ -1,3 +1,9 @@
+## [1.1.9](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-a2a/compare/v1.1.8...v1.1.9) (2026-08-15)
+
+### :bug: Fixes
+
+* **deps:** update dependency sylius/sylius to ^2.2.8 ([01283bf](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-a2a/commit/01283bf9678b1a8962779063b261981ef8688e09))
+
 ## [1.1.8](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-a2a/compare/v1.1.7...v1.1.8) (2026-08-15)
 
 ### :bug: Fixes

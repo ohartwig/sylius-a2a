@@ -1,3 +1,9 @@
+## [1.1.10](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-a2a/compare/v1.1.9...v1.1.10) (2026-08-15)
+
+### :repeat: Chores
+
+* **deps:** update phpstan packages ([bdf274b](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-a2a/commit/bdf274ba1295935d860ab3c270379db60d8f537e))
+
 ## [1.1.9](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-a2a/compare/v1.1.8...v1.1.9) (2026-08-15)
 
 ### :bug: Fixes

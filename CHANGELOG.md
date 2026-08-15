@@ -1,3 +1,13 @@
+## [1.1.6](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-a2a/compare/v1.1.5...v1.1.6) (2026-08-15)
+
+### :white_check_mark: Tests
+
+* cover the endpoint provider and the bundle ([682f24b](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-a2a/commit/682f24bd8f01fad6b0a68b16a8bbceaf510257f7))
+
+### :repeat: Chores
+
+* **ci:** enrol the Renovate bot's signing key ([71e03a6](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-a2a/commit/71e03a6d2119674470b18de989fba66c58450a1d))
+
 ## [1.1.5](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-a2a/compare/v1.1.4...v1.1.5) (2026-08-14)
 
 ### :bug: Fixes

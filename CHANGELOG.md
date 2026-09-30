@@ -1,3 +1,19 @@
+## [1.1.26](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-a2a/compare/v1.1.25...v1.1.26) (2026-09-30)
+
+### :bug: Fixes
+
+* **deps:** update dependency sylius/sylius to ^2.3.0 ([38ca06e](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-a2a/commit/38ca06e6f5fb0f877df0630b2474ed2c96210a8e))
+
+### :repeat: Continuous Integrations
+
+* **deps:** update dependency devops/ci-cd-components/composed-default-pipelines to v2.21.16 ([1a79ac8](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-a2a/commit/1a79ac8d95da783ffc2afeaef29da5ed3a17fc0e))
+* **deps:** update dependency devops/ci-cd-components/composed-default-pipelines to v2.21.12 ([3b9c17b](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-a2a/commit/3b9c17b92ffd6a896c876b3105ede0e2e2007b4b))
+* **deps:** update dependency devops/ci-cd-components/composed-default-pipelines to v2.21.11 ([cfef273](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-a2a/commit/cfef27320e502d05aed70a1175b2f7b7fc96a2db))
+* **deps:** update dependency devops/ci-cd-components/composed-default-pipelines to v2.21.10 ([4a1693a](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-a2a/commit/4a1693ae1e3dc14329b13193a912e8e17765622e))
+* **deps:** update dependency devops/ci-cd-components/composed-default-pipelines to v2.21.9 ([06cf51c](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-a2a/commit/06cf51cc54aeaeeace4939191427af0b128d3e0e))
+* **deps:** update dependency devops/ci-cd-components/composed-default-pipelines to v2.21.6 ([57ca2ce](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-a2a/commit/57ca2ce68d3772788cb2bbdbb2c40bf33a1f8862))
+* **deps:** update dependency devops/ci-cd-components/composed-default-pipelines to v2.21.3 ([eeb9cdf](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-a2a/commit/eeb9cdfb90ba0fb971ef08018efc903e703000c3))
+
 ## [1.1.25](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-a2a/compare/v1.1.24...v1.1.25) (2026-09-28)
 
 ### :repeat: Continuous Integrations

@@ -1,3 +1,9 @@
+## [1.1.28](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-a2a/compare/v1.1.27...v1.1.28) (2026-10-04)
+
+### :bug: Fixes
+
+* **deps:** accept Sylius 2.2.9 again ([4d44607](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-a2a/commit/4d4460786b731e4c2fef82ce7b5a22a07cbbd472))
+
 ## [1.1.27](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-a2a/compare/v1.1.26...v1.1.27) (2026-10-02)
 
 ### :repeat: Continuous Integrations

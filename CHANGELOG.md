@@ -1,3 +1,9 @@
+## [1.1.35](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-a2a/compare/v1.1.34...v1.1.35) (2026-10-14)
+
+### :repeat: Chores
+
+* **repo-templates:** sync ([54ede37](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-a2a/commit/54ede374d416de0c7b9520a2767d836844a9afa8))
+
 ## [1.1.34](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-a2a/compare/v1.1.33...v1.1.34) (2026-10-13)
 
 ### :repeat: Chores

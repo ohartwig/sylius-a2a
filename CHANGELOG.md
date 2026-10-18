@@ -1,3 +1,9 @@
+## [1.1.37](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-a2a/compare/v1.1.36...v1.1.37) (2026-10-18)
+
+### :bug: Fixes
+
+* admit PHP 8.3 and test the floor on it ([aa79477](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-a2a/commit/aa794770c507e97d22d08df604ec4d80ba24b848))
+
 ## [1.1.36](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-a2a/compare/v1.1.35...v1.1.36) (2026-10-16)
 
 ### :repeat: Chores

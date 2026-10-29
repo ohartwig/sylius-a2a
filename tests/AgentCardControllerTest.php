@@ -30,12 +30,18 @@ final class AgentCardControllerTest extends TestCase
         self::assertArrayHasKey('capabilities', $card);
     }
 
-    public function testInterfacePointsAtTheTransport(): void
+    /**
+     * AUD-066-F01: the card pointed at the MCP endpoint as an A2A JSON-RPC
+     * interface. That endpoint speaks MCP and needs an admin-delegated token,
+     * so the card names no interface until the shop serves A2A.
+     */
+    public function testTheCardNamesNoTransportTheShopDoesNotServe(): void
     {
-        $interface = $this->card()['supportedInterfaces'][0];
+        $card = $this->card();
 
-        self::assertSame('https://shop.example.com/_mcp', $interface['url']);
-        self::assertSame('JSONRPC', $interface['transport']);
+        self::assertArrayNotHasKey('supportedInterfaces', $card);
+        self::assertArrayNotHasKey('preferredTransport', $card);
+        self::assertStringNotContainsString('/_mcp', (string) json_encode($card));
     }
 
     public function testSkillsCarryIdNameAndDescription(): void
@@ -77,19 +83,12 @@ final class AgentCardControllerTest extends TestCase
         self::assertSame('Tobacco, shipped from Germany.', $card['description']);
     }
 
-    public function testTransportPathIsConfigurable(): void
-    {
-        $card = $this->card(transportPath: '/api/agent');
-
-        self::assertSame('https://shop.example.com/api/agent', $card['supportedInterfaces'][0]['url']);
-    }
-
     /**
      * @param list<AgentSkillProviderInterface>|null $providers
      *
      * @return array<string, mixed>
      */
-    private function card(?array $providers = null, ?string $description = null, string $transportPath = '/_mcp'): array
+    private function card(?array $providers = null, ?string $description = null): array
     {
         $controller = new AgentCardController(
             new AgentSkillRegistry($providers ?? [$this->provider(
@@ -99,7 +98,6 @@ final class AgentCardControllerTest extends TestCase
             new AgentJsonResponder(),
             '1.0.0',
             $description,
-            $transportPath,
         );
 
         /** @var array<string, mixed> $decoded */

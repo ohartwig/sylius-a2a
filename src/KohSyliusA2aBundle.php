@@ -35,8 +35,9 @@ final class KohSyliusA2aBundle extends AbstractBundle
                     ->info('Defaults to "Agent interface for <channel name>."')
                 ->end()
                 ->scalarNode('transport_path')
-                    ->defaultValue('/_mcp')
-                    ->info('Endpoint agents call. Must match a transport the shop actually serves.')
+                    ->defaultNull()
+                    ->info('Ignored. The card names no interface until the shop serves A2A.')
+                    ->setDeprecated('koh/sylius-a2a', '1.2', 'The "%node%" option is ignored: the card names no interface until the shop serves A2A (AUD-066-F01). Remove it.')
                 ->end()
             ->end();
     }
@@ -48,7 +49,6 @@ final class KohSyliusA2aBundle extends AbstractBundle
     {
         $builder->setParameter('koh_a2a.version', (string) ($config['version'] ?? '1.0.0'));
         $builder->setParameter('koh_a2a.description', $config['description'] ?? null);
-        $builder->setParameter('koh_a2a.transport_path', (string) ($config['transport_path'] ?? '/_mcp'));
 
         $container->import('../config/services.php');
     }

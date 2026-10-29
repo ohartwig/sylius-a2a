@@ -1,3 +1,9 @@
+## [1.1.40](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-a2a/compare/v1.1.39...v1.1.40) (2026-10-29)
+
+### :bug: Fixes
+
+* **card:** name no transport the shop does not serve as A2A ([88124be](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-a2a/commit/88124be78ccb40ad943b4b07aecec97264a78017))
+
 ## [1.1.39](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-a2a/compare/v1.1.38...v1.1.39) (2026-10-28)
 
 ### :repeat: Chores

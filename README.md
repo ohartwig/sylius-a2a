@@ -32,11 +32,18 @@ koh_a2a:
 koh_a2a:
     version: '1.0.0'
     description: 'Tobacco, shipped from Germany.'   # defaults to the channel name
-    transport_path: '/_mcp'
 ```
 
-`transport_path` must name an endpoint the shop actually serves. A card
-advertising a transport that 404s is worse than no card.
+## No transport, on purpose
+
+The card names no `supportedInterfaces`: this package serves no A2A endpoint,
+and a card that points agents at something that is not A2A is worse than one
+that names nothing. Earlier versions pointed it at the MCP endpoint `/_mcp`,
+which speaks MCP and needs an admin-delegated token, so an agent following the
+card was steered into asking for admin rights to read public data.
+
+`transport_path` is deprecated and ignored. Remove it from your configuration.
+An interface comes back once the shop serves A2A itself.
 
 ## Skills come from the registry
 

@@ -28,7 +28,7 @@ use Symfony\Component\Config\FileLocator;
  * too deep and the services would silently not be registered.
  *
  * The configuration defaults are a public contract: a shop that sets nothing
- * still has to end up with a working transport path and version. `null` for
+ * still has to end up with a working version. `null` for
  * the description is deliberate rather than an empty string — the card
  * generator distinguishes "not configured" from "configured as empty" and
  * substitutes a channel-derived sentence for the former.
@@ -54,7 +54,7 @@ final class KohSyliusA2aBundleTest extends TestCase
         $config = $this->processConfig([]);
 
         self::assertSame('1.0.0', $config['version']);
-        self::assertSame('/_mcp', $config['transport_path']);
+        self::assertNull($config['transport_path']);
     }
 
     public function testAnUnsetDescriptionStaysNullRatherThanBecomingEmpty(): void
@@ -69,20 +69,26 @@ final class KohSyliusA2aBundleTest extends TestCase
         $config = $this->processConfig([[
             'version' => '2.1.0',
             'description' => 'Eigener Text.',
-            'transport_path' => '/agent',
         ]]);
 
         self::assertSame('2.1.0', $config['version']);
         self::assertSame('Eigener Text.', $config['description']);
-        self::assertSame('/agent', $config['transport_path']);
     }
 
     public function testTheParametersReachTheContainerAsStrings(): void
     {
-        $builder = $this->loadExtension(['version' => '2.0.0', 'transport_path' => '/agent']);
+        $builder = $this->loadExtension(['version' => '2.0.0']);
 
         self::assertSame('2.0.0', $builder->getParameter('koh_a2a.version'));
-        self::assertSame('/agent', $builder->getParameter('koh_a2a.transport_path'));
+        self::assertFalse($builder->hasParameter('koh_a2a.transport_path'));
+    }
+
+    /** Installations that still set the option keep booting; the value is not used. */
+    public function testTheRetiredTransportPathIsStillAccepted(): void
+    {
+        $builder = $this->loadExtension(['transport_path' => '/_mcp']);
+
+        self::assertFalse($builder->hasParameter('koh_a2a.transport_path'));
     }
 
     public function testAVersionWrittenAsAYamlNumberIsNotPublishedAsOne(): void

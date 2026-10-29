@@ -25,7 +25,6 @@ return static function (ContainerConfigurator $container): void {
             service(AgentJsonResponder::class),
             param('koh_a2a.version'),
             param('koh_a2a.description'),
-            param('koh_a2a.transport_path'),
         ])
         ->public()
         ->tag('controller.service_arguments');

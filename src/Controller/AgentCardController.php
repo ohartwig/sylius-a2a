@@ -21,6 +21,13 @@ use Symfony\Component\HttpFoundation\Response;
  * other documents project the same skills — the agent-skills index and the MCP
  * server card — and hand-maintaining three copies is how they end up disagreeing
  * about what the shop can do.
+ *
+ * The card names no interface. This package serves no A2A transport, and the
+ * card used to point `supportedInterfaces` at the MCP endpoint, which speaks
+ * MCP, not A2A, and needs an admin-delegated token the card did not declare
+ * (AUD-066-F01). An agent that followed it was steered into asking for admin
+ * rights to read public data. Until the shop serves A2A, the card describes
+ * skills and leaves the transport out.
  */
 final class AgentCardController
 {
@@ -30,7 +37,6 @@ final class AgentCardController
         private readonly AgentJsonResponder $responder,
         private readonly string $version = '1.0.0',
         private readonly ?string $description = null,
-        private readonly string $transportPath = '/_mcp',
     ) {
     }
 
@@ -45,11 +51,6 @@ final class AgentCardController
             'version' => $this->version,
             'description' => $this->description ?? \sprintf('Agent interface for %s.', $name),
             'url' => $context->baseUrl,
-            'preferredTransport' => 'JSONRPC',
-            'supportedInterfaces' => [[
-                'url' => $context->url($this->transportPath),
-                'transport' => 'JSONRPC',
-            ]],
             'capabilities' => [
                 'streaming' => false,
                 'pushNotifications' => false,

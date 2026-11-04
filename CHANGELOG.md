@@ -1,3 +1,14 @@
+## [1.1.42](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-a2a/compare/v1.1.41...v1.1.42) (2026-11-04)
+
+### :bug: Fixes
+
+* **security:** AUD-053 F01 — replace customer identifiers with placeholders ([1a2b14c](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-a2a/commit/1a2b14caf5cfb0aa5fac57c66570aba63b4eb02a))
+
+### :white_check_mark: Tests
+
+* **security:** AUD-053 F01 — fix the hygiene test namespace (PSR-4) ([0d4fdbe](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-a2a/commit/0d4fdbe671b0fe4388a74f7a7443eec0d7dc7d88))
+* **security:** AUD-053 F01 — add the customer-name hygiene test ([dce65b5](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-a2a/commit/dce65b5be88ab47495b13fe849c9598e9bf57a69))
+
 ## [1.1.41](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-a2a/compare/v1.1.40...v1.1.41) (2026-10-30)
 
 ### :repeat: Chores

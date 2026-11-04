@@ -24,7 +24,7 @@ final class AgentCardControllerTest extends TestCase
     {
         $card = $this->card();
 
-        self::assertSame('Tabak Budde', $card['name']);
+        self::assertSame('Example Shop', $card['name']);
         self::assertSame('1.0.0', $card['version']);
         self::assertArrayHasKey('description', $card);
         self::assertArrayHasKey('capabilities', $card);
@@ -73,7 +73,7 @@ final class AgentCardControllerTest extends TestCase
         $card = $this->card([]);
 
         self::assertSame([], $card['skills']);
-        self::assertSame('Tabak Budde', $card['name']);
+        self::assertSame('Example Shop', $card['name']);
     }
 
     public function testDescriptionCanBeOverridden(): void
@@ -124,7 +124,7 @@ final class AgentCardControllerTest extends TestCase
     {
         $channel = $this->createMock(ChannelInterface::class);
         $channel->method('getCode')->willReturn('WEB_DE');
-        $channel->method('getName')->willReturn('Tabak Budde');
+        $channel->method('getName')->willReturn('Example Shop');
 
         $factory = $this->createMock(AgentContextFactoryInterface::class);
         $factory->method('create')->willReturn(

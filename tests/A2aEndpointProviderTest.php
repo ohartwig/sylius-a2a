@@ -83,7 +83,7 @@ final class A2aEndpointProviderTest extends TestCase
     private function context(): AgentContext
     {
         $channel = $this->createStub(ChannelInterface::class);
-        $channel->method('getName')->willReturn('Tabak Budde');
+        $channel->method('getName')->willReturn('Example Shop');
 
         return new AgentContext(
             channel: $channel,

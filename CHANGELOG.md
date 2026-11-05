@@ -1,3 +1,9 @@
+## [1.3.0](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-a2a/compare/v1.2.0...v1.3.0) (2026-11-05)
+
+### :sparkles: Features
+
+* **a2a:** serve an A2A 1.0 JSON-RPC endpoint with catalogue skills ([955a5f2](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-a2a/commit/955a5f2b691a5be1cb4243746bc80cc97d77c43d))
+
 ## [1.2.0](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-a2a/compare/v1.1.42...v1.2.0) (2026-11-05)
 
 ### :sparkles: Features

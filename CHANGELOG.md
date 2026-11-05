@@ -1,3 +1,9 @@
+## [1.2.0](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-a2a/compare/v1.1.42...v1.2.0) (2026-11-05)
+
+### :sparkles: Features
+
+* **card:** serve an A2A 1.0 card only for a configured A2A interface ([c8b20b6](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-a2a/commit/c8b20b6c19e67200b55851584cce539cae436cb3))
+
 ## [1.1.42](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-a2a/compare/v1.1.41...v1.1.42) (2026-11-04)
 
 ### :bug: Fixes

@@ -1,6 +1,6 @@
 {
     "name": "koh/sylius-a2a",
-    "description": "Publishes an A2A Agent Card at /.well-known/agent-card.json, built from the shop's registered agent skills.",
+    "description": "Publishes an A2A 1.0 Agent Card at /.well-known/agent-card.json for a configured A2A endpoint, built from the shop's registered agent skills.",
     "type": "sylius-bundle",
     "license": "MIT",
     "keywords": [

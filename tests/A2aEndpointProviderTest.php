@@ -27,6 +27,17 @@ use Sylius\Component\Core\Model\ChannelInterface;
  */
 final class A2aEndpointProviderTest extends TestCase
 {
+    /**
+     * Without an A2A interface the card answers 404. Announcing it anyway would
+     * put that 404 into llms.txt, the Link headers and the readiness check.
+     */
+    public function testItAnnouncesNothingWhileTheCardIsNotServed(): void
+    {
+        $endpoints = (new A2aEndpointProvider())->getAgentEndpoints($this->context());
+
+        self::assertSame([], iterator_to_array($endpoints));
+    }
+
     public function testItAnnouncesTheWellKnownAgentCard(): void
     {
         $endpoints = iterator_to_array($this->endpoints());
@@ -62,7 +73,7 @@ final class A2aEndpointProviderTest extends TestCase
     {
         // Wiring is by interface, not by name. Drop the interface and the
         // provider is simply never asked — no error anywhere.
-        self::assertInstanceOf(AgentEndpointProviderInterface::class, new A2aEndpointProvider());
+        self::assertInstanceOf(AgentEndpointProviderInterface::class, new A2aEndpointProvider(true));
     }
 
     public function testEveryYieldedEntryIsAnAgentEndpoint(): void
@@ -74,7 +85,7 @@ final class A2aEndpointProviderTest extends TestCase
 
     private function endpoints(): \Generator
     {
-        $endpoints = (new A2aEndpointProvider())->getAgentEndpoints($this->context());
+        $endpoints = (new A2aEndpointProvider(true))->getAgentEndpoints($this->context());
         self::assertInstanceOf(\Generator::class, $endpoints);
 
         return $endpoints;

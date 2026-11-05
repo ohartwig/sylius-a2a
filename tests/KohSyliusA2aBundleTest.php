@@ -7,9 +7,12 @@ declare(strict_types=1);
 
 namespace Koh\SyliusA2a\Tests;
 
+use Koh\SyliusA2a\Agent\A2aEndpointProvider;
+use Koh\SyliusA2a\Controller\AgentCardController;
 use Koh\SyliusA2a\KohSyliusA2aBundle;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Config\Definition\Configurator\DefinitionConfigurator;
+use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Config\Definition\Loader\DefinitionFileLoader;
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
@@ -55,6 +58,82 @@ final class KohSyliusA2aBundleTest extends TestCase
 
         self::assertSame('1.0.0', $config['version']);
         self::assertNull($config['transport_path']);
+        self::assertSame([], $config['interfaces']);
+    }
+
+    public function testAnInterfaceDefaultsToJsonRpcAtA2a10(): void
+    {
+        $config = $this->processConfig([['interfaces' => [['url' => '/a2a/v1']]]]);
+
+        self::assertSame(
+            [['url' => '/a2a/v1', 'protocol_binding' => 'JSONRPC', 'protocol_version' => '1.0']],
+            $config['interfaces'],
+        );
+    }
+
+    /** MCP is not an A2A protocol binding; the old mistake cannot be configured back in. */
+    public function testOnlyTheA2aCoreBindingsAreAccepted(): void
+    {
+        $this->expectException(InvalidConfigurationException::class);
+
+        $this->processConfig([['interfaces' => [['url' => '/_mcp', 'protocol_binding' => 'MCP']]]]);
+    }
+
+    public function testAnInterfaceNeedsAUrl(): void
+    {
+        $this->expectException(InvalidConfigurationException::class);
+
+        $this->processConfig([['interfaces' => [['protocol_binding' => 'JSONRPC']]]]);
+    }
+
+    public function testWithoutInterfacesTheCardIsNeitherServedNorAnnounced(): void
+    {
+        $builder = $this->loadExtension([]);
+
+        self::assertSame([], $builder->getParameter('koh_a2a.interfaces'));
+        self::assertFalse($builder->getParameter('koh_a2a.card_served'));
+        self::assertSame(
+            ['%koh_a2a.card_served%'],
+            array_map('strval', $builder->getDefinition(A2aEndpointProvider::class)->getArguments()),
+        );
+        self::assertSame(
+            '%koh_a2a.interfaces%',
+            (string) $builder->getDefinition(AgentCardController::class)->getArgument(5),
+        );
+    }
+
+    public function testConfiguredInterfacesReachTheContainer(): void
+    {
+        $builder = $this->loadExtension(['interfaces' => [
+            ['url' => 'https://agents.example.com/a2a', 'protocol_binding' => 'GRPC', 'protocol_version' => '1.1'],
+            ['url' => '/a2a/v1'],
+        ]]);
+
+        self::assertSame([
+            ['url' => 'https://agents.example.com/a2a', 'protocol_binding' => 'GRPC', 'protocol_version' => '1.1'],
+            ['url' => '/a2a/v1', 'protocol_binding' => 'JSONRPC', 'protocol_version' => '1.0'],
+        ], $builder->getParameter('koh_a2a.interfaces'));
+        self::assertTrue($builder->getParameter('koh_a2a.card_served'));
+    }
+
+    public function testAProtocolVersionWrittenAsAYamlNumberKeepsItsMinor(): void
+    {
+        // `protocol_version: 1.0` parses as the float 1.0; A2A wants "1.0", not "1".
+        $builder = $this->loadExtension(['interfaces' => [['url' => '/a2a', 'protocol_version' => 1.0]]]);
+
+        /** @var list<array<string, string>> $interfaces */
+        $interfaces = $builder->getParameter('koh_a2a.interfaces');
+        self::assertSame('1.0', $interfaces[0]['protocol_version']);
+    }
+
+    public function testMalformedInterfaceEntriesAreSkipped(): void
+    {
+        $builder = $this->loadExtension(['interfaces' => ['not-an-interface', ['url' => '/a2a']]]);
+
+        self::assertSame(
+            [['url' => '/a2a', 'protocol_binding' => 'JSONRPC', 'protocol_version' => '1.0']],
+            $builder->getParameter('koh_a2a.interfaces'),
+        );
     }
 
     public function testAnUnsetDescriptionStaysNullRatherThanBecomingEmpty(): void
@@ -89,6 +168,9 @@ final class KohSyliusA2aBundleTest extends TestCase
         $builder = $this->loadExtension(['transport_path' => '/_mcp']);
 
         self::assertFalse($builder->hasParameter('koh_a2a.transport_path'));
+        // And it does not turn into an interface: the MCP endpoint is not A2A.
+        self::assertSame([], $builder->getParameter('koh_a2a.interfaces'));
+        self::assertFalse($builder->getParameter('koh_a2a.card_served'));
     }
 
     public function testAVersionWrittenAsAYamlNumberIsNotPublishedAsOne(): void

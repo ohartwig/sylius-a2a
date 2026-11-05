@@ -5,8 +5,9 @@ SPDX-License-Identifier: MIT
 
 # koh/sylius-a2a
 
-Publishes an [A2A](https://a2a-protocol.org/) Agent Card at
-`/.well-known/agent-card.json`.
+Publishes an [A2A](https://a2a-protocol.org/) 1.0 Agent Card at
+`/.well-known/agent-card.json` — once the shop has an A2A endpoint to name in
+it. Until then the path answers 404 and the card is not announced anywhere.
 
 ## Install
 
@@ -32,18 +33,32 @@ koh_a2a:
 koh_a2a:
     version: '1.0.0'
     description: 'Tobacco, shipped from Germany.'   # defaults to the channel name
+    interfaces:                                     # empty by default: no card
+        - url: '/a2a/v1'                            # or an absolute URL
+          protocol_binding: JSONRPC                 # JSONRPC | GRPC | HTTP+JSON
+          protocol_version: '1.0'                   # Major.Minor the endpoint speaks
 ```
 
-## No transport, on purpose
+## No interface, no card
 
-The card names no `supportedInterfaces`: this package serves no A2A endpoint,
-and a card that points agents at something that is not A2A is worse than one
-that names nothing. Earlier versions pointed it at the MCP endpoint `/_mcp`,
-which speaks MCP and needs an admin-delegated token, so an agent following the
-card was steered into asking for admin rights to read public data.
+A2A 1.0 makes `supportedInterfaces` a required field: the card exists to say
+where an agent sends `SendMessage`. This package serves no A2A endpoint
+itself, so it publishes the card only when `interfaces` names one that some
+other component serves. With `interfaces` empty — the default —
+`/.well-known/agent-card.json` answers 404, and the endpoint is left out of
+the discovery registry, so `llms.txt`, the Link headers and the readiness check
+do not point at it either.
+
+Do not list the MCP endpoint here. It speaks MCP, not A2A, and needs an
+admin-delegated token; earlier versions pointed the card at `/_mcp` and steered
+agents into asking for admin rights to read public data. The binding is limited
+to the three A2A core bindings, so `MCP` is rejected at container build.
 
 `transport_path` is deprecated and ignored. Remove it from your configuration.
-An interface comes back once the shop serves A2A itself.
+
+The card is A2A 1.0: no top-level `url` or `preferredTransport`, no
+`capabilities.stateTransitionHistory`. A skill registered without tags is
+tagged with its id, because `tags` is required.
 
 ## Skills come from the registry
 
@@ -53,9 +68,8 @@ copies is how they end up disagreeing about what the shop can do. Register a
 skill once by implementing `AgentSkillProviderInterface` from
 `koh/sylius-agent-contracts` and all three follow.
 
-A shop with no skills still serves the card. It is discovery, not a capability:
-an agent asking what this origin can do deserves an answer, even if the answer
-is "nothing yet".
+A shop with an interface but no skills still serves the card, with an empty
+`skills` list.
 
 ## Decommission
 

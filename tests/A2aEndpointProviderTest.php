@@ -10,6 +10,8 @@ namespace Koh\SyliusA2a\Tests;
 use Koh\SyliusA2a\Agent\A2aEndpointProvider;
 use Koh\SyliusAgentContracts\Context\AgentContext;
 use Koh\SyliusAgentContracts\Model\AgentEndpoint;
+use Koh\SyliusAgentContracts\Model\ApiCatalogEntry;
+use Koh\SyliusAgentContracts\Provider\ApiCatalogEntryProviderInterface;
 use Koh\SyliusAgentContracts\Provider\AgentEndpointProviderInterface;
 use PHPUnit\Framework\TestCase;
 use Sylius\Component\Core\Model\ChannelInterface;
@@ -81,6 +83,34 @@ final class A2aEndpointProviderTest extends TestCase
         foreach ($this->endpoints() as $endpoint) {
             self::assertInstanceOf(AgentEndpoint::class, $endpoint);
         }
+    }
+
+    /**
+     * The RFC 9727 api-catalog (and the Link headers built from it) lists the
+     * JSON-RPC endpoint with the card as its service description — exactly
+     * while both are served.
+     */
+    public function testTheApiCatalogListsTheEndpointDescribedByTheCard(): void
+    {
+        $entries = iterator_to_array((new A2aEndpointProvider(true, true))->getApiCatalogEntries($this->context()));
+
+        self::assertCount(1, $entries);
+        self::assertInstanceOf(ApiCatalogEntry::class, $entries[0]);
+        self::assertSame([
+            'anchor' => 'https://shop.example.com/api/agent/a2a',
+            'service-desc' => [['href' => 'https://shop.example.com/.well-known/agent-card.json', 'type' => 'application/json']],
+            'title' => 'A2A agent (JSON-RPC)',
+        ], $entries[0]->toArray());
+        self::assertInstanceOf(ApiCatalogEntryProviderInterface::class, new A2aEndpointProvider());
+    }
+
+    public function testTheApiCatalogListsNothingWithoutTheEndpoint(): void
+    {
+        // A card that names only interfaces served elsewhere: those are the
+        // other component's to list.
+        self::assertSame([], iterator_to_array((new A2aEndpointProvider(true, false))->getApiCatalogEntries($this->context())));
+        self::assertSame([], iterator_to_array((new A2aEndpointProvider(false, true))->getApiCatalogEntries($this->context())));
+        self::assertSame([], iterator_to_array((new A2aEndpointProvider())->getApiCatalogEntries($this->context())));
     }
 
     private function endpoints(): \Generator

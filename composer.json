@@ -1,12 +1,13 @@
 {
     "name": "koh/sylius-a2a",
-    "description": "Publishes an A2A 1.0 Agent Card at /.well-known/agent-card.json for a configured A2A endpoint, built from the shop's registered agent skills.",
+    "description": "An A2A 1.0 agent for Sylius: a JSON-RPC endpoint with deterministic catalogue skills and the Agent Card at /.well-known/agent-card.json.",
     "type": "sylius-bundle",
     "license": "MIT",
     "keywords": [
         "sylius",
         "a2a",
         "agent-card",
+        "json-rpc",
         "agent",
         "ai"
     ],
@@ -23,13 +24,15 @@
         "security": "https://github.com/ohartwig/sylius-a2a/blob/main/SECURITY.md"
     },
     "require": {
-        "koh/sylius-agent-contracts": "^1.1",
         "php": "^8.3",
+        "doctrine/orm": "^2.18 || ^3.5",
+        "koh/sylius-agent-contracts": "^1.1",
         "sylius/sylius": "^2.2.9 || ^2.3.0",
         "symfony/config": "^7.4 || ^8.0",
         "symfony/dependency-injection": "^7.4 || ^8.0",
         "symfony/http-foundation": "^7.4 || ^8.0",
         "symfony/http-kernel": "^7.4 || ^8.0",
+        "symfony/rate-limiter": "^7.4 || ^8.0",
         "symfony/routing": "^7.4 || ^8.0"
     },
     "require-dev": {

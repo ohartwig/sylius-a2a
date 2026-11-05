@@ -7,13 +7,15 @@ declare(strict_types=1);
 
 namespace Koh\SyliusA2a;
 
+use Koh\SyliusA2a\Controller\JsonRpcController;
 use Symfony\Component\Config\Definition\Configurator\DefinitionConfigurator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\HttpKernel\Bundle\AbstractBundle;
 
 /**
- * Publishes the A2A Agent Card.
+ * An A2A 1.0 agent for the shop: the JSON-RPC endpoint, its skills and the
+ * Agent Card that names them.
  */
 final class KohSyliusA2aBundle extends AbstractBundle
 {
@@ -34,8 +36,38 @@ final class KohSyliusA2aBundle extends AbstractBundle
                     ->defaultNull()
                     ->info('Defaults to "Agent interface for <channel name>."')
                 ->end()
+                ->arrayNode('endpoint')
+                    ->info('The A2A JSON-RPC endpoint this package serves at '.JsonRpcController::PATH.'. Disabled: the path answers 404 and the card names only the configured "interfaces".')
+                    ->canBeDisabled()
+                    ->children()
+                        ->integerNode('rate_limit')
+                            ->defaultValue(60)
+                            ->min(1)
+                            ->info('Requests per client address and rate_interval.')
+                        ->end()
+                        ->scalarNode('rate_interval')
+                            ->defaultValue('1 minute')
+                            ->cannotBeEmpty()
+                        ->end()
+                        ->integerNode('max_request_bytes')
+                            ->defaultValue(65536)
+                            ->min(1024)
+                            ->info('Larger request bodies are refused with HTTP 413 before they are parsed.')
+                        ->end()
+                        ->integerNode('task_ttl')
+                            ->defaultValue(86400)
+                            ->min(60)
+                            ->info('Seconds a task id stays retrievable with GetTask.')
+                        ->end()
+                    ->end()
+                ->end()
+                ->integerNode('age_restriction')
+                    ->defaultNull()
+                    ->min(0)
+                    ->info('Minimum age carried on every product the skills return (as the ACP feed does). Null: not carried.')
+                ->end()
                 ->arrayNode('interfaces')
-                    ->info('A2A endpoints the shop actually serves. Empty: the card answers 404 and is not announced.')
+                    ->info('Further A2A interfaces serving this same agent, listed after the endpoint. With the endpoint disabled and none here, the card answers 404 and is not announced.')
                     ->arrayPrototype()
                         ->children()
                             ->scalarNode('url')
@@ -71,7 +103,17 @@ final class KohSyliusA2aBundle extends AbstractBundle
         $builder->setParameter('koh_a2a.description', $config['description'] ?? null);
         $interfaces = self::interfaces($config['interfaces'] ?? []);
         $builder->setParameter('koh_a2a.interfaces', $interfaces);
-        $builder->setParameter('koh_a2a.card_served', [] !== $interfaces);
+
+        $endpoint = \is_array($config['endpoint'] ?? null) ? $config['endpoint'] : [];
+        $endpointEnabled = (bool) ($endpoint['enabled'] ?? true);
+        $builder->setParameter('koh_a2a.endpoint.enabled', $endpointEnabled);
+        $builder->setParameter('koh_a2a.endpoint.rate_limit', self::int($endpoint['rate_limit'] ?? null, 60));
+        $builder->setParameter('koh_a2a.endpoint.rate_interval', \is_string($endpoint['rate_interval'] ?? null) ? $endpoint['rate_interval'] : '1 minute');
+        $builder->setParameter('koh_a2a.endpoint.max_request_bytes', self::int($endpoint['max_request_bytes'] ?? null, 65536));
+        $builder->setParameter('koh_a2a.endpoint.task_ttl', self::int($endpoint['task_ttl'] ?? null, 86400));
+        $ageRestriction = $config['age_restriction'] ?? null;
+        $builder->setParameter('koh_a2a.age_restriction', \is_int($ageRestriction) ? $ageRestriction : null);
+        $builder->setParameter('koh_a2a.card_served', $endpointEnabled || [] !== $interfaces);
 
         $container->import('../config/services.php');
     }
@@ -95,6 +137,11 @@ final class KohSyliusA2aBundle extends AbstractBundle
         }
 
         return $result;
+    }
+
+    private static function int(mixed $value, int $default): int
+    {
+        return \is_int($value) ? $value : $default;
     }
 
     private static function majorMinor(mixed $version): string

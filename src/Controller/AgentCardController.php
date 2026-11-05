@@ -7,28 +7,27 @@ declare(strict_types=1);
 
 namespace Koh\SyliusA2a\Controller;
 
+use Koh\SyliusA2a\JsonRpc\A2aMethods;
 use Koh\SyliusAgentContracts\Context\AgentContextFactoryInterface;
 use Koh\SyliusAgentContracts\Http\AgentJsonResponder;
-use Koh\SyliusAgentContracts\Model\AgentSkill;
-use Koh\SyliusAgentContracts\Registry\AgentSkillRegistry;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Serves the A2A Agent Card at /.well-known/agent-card.json, or nothing.
+ * Serves the A2A 1.0 Agent Card at /.well-known/agent-card.json, or nothing.
  *
  * Since A2A 1.0, `supportedInterfaces` is a required field: a card is a
- * description of where to send `SendMessage`, not a brochure. This package
- * serves no A2A transport, so the card is only published when the operator
- * names an interface that does — served by some other component. Without one
- * the path answers 404. A card with no interface is invalid, and a card that
- * names the MCP endpoint as an A2A interface steers agents into speaking A2A
- * to an MCP server that also wants an admin-delegated token (AUD-066-F01).
+ * description of where to send `SendMessage`, not a brochure. The card names
+ * this package's own JSON-RPC endpoint when it is enabled, followed by any
+ * further interfaces the operator configured for the same agent. With neither
+ * the path answers 404. A card that names the MCP endpoint as an A2A interface
+ * steers agents into speaking A2A to an MCP server that also wants an
+ * admin-delegated token (AUD-066-F01), so that cannot be configured.
  *
- * Skills come from the shared registry rather than a list in this file. Two
- * other documents project the same skills — the agent-skills index and the MCP
- * server card — and hand-maintaining three copies is how they end up disagreeing
- * about what the shop can do.
+ * The skills are the ones the endpoint executes — not the shared skill
+ * registry, which also holds skills other interfaces serve (an ACP feed, MCP
+ * tools). A card that names a skill SendMessage cannot run is the same lie as
+ * a card without an endpoint.
  */
 final class AgentCardController
 {
@@ -36,18 +35,26 @@ final class AgentCardController
      * @param list<array{url: string, protocol_binding: string, protocol_version: string}> $interfaces
      */
     public function __construct(
-        private readonly AgentSkillRegistry $skills,
+        private readonly A2aMethods $methods,
         private readonly AgentContextFactoryInterface $contextFactory,
         private readonly AgentJsonResponder $responder,
         private readonly string $version = '1.0.0',
         private readonly ?string $description = null,
         private readonly array $interfaces = [],
+        private readonly bool $endpointEnabled = true,
     ) {
     }
 
     public function __invoke(Request $request): Response
     {
-        if ([] === $this->interfaces) {
+        $interfaces = $this->endpointEnabled
+            ? [[
+                'url' => JsonRpcController::PATH,
+                'protocol_binding' => 'JSONRPC',
+                'protocol_version' => A2aMethods::PROTOCOL_VERSION,
+            ], ...$this->interfaces]
+            : $this->interfaces;
+        if ([] === $interfaces) {
             return new Response('', Response::HTTP_NOT_FOUND);
         }
 
@@ -56,23 +63,28 @@ final class AgentCardController
 
         return $this->responder->respond([
             'name' => $name,
-            'description' => $this->description ?? \sprintf('Agent interface for %s.', $name),
+            'description' => $this->description ?? \sprintf('Agent interface for %s: searches the catalogue and returns products with prices, availability and product page links.', $name),
             'supportedInterfaces' => array_map(
                 static fn (array $interface): array => [
                     'url' => self::absolute($interface['url'], $context->baseUrl),
                     'protocolBinding' => $interface['protocol_binding'],
                     'protocolVersion' => $interface['protocol_version'],
                 ],
-                $this->interfaces,
+                $interfaces,
             ),
+            'provider' => [
+                'organization' => $name,
+                'url' => self::absolute('/', $context->baseUrl),
+            ],
             'version' => $this->version,
             'capabilities' => [
                 'streaming' => false,
                 'pushNotifications' => false,
+                'extendedAgentCard' => false,
             ],
-            'defaultInputModes' => ['text/plain', 'application/json'],
-            'defaultOutputModes' => ['application/json'],
-            'skills' => array_map($this->toA2aSkill(...), $this->skills->all($context)),
+            'defaultInputModes' => A2aMethods::INPUT_MODES,
+            'defaultOutputModes' => A2aMethods::OUTPUT_MODES,
+            'skills' => array_map(static fn ($skill): array => $skill->card(), $this->methods->skills()),
         ], request: $request);
     }
 
@@ -84,20 +96,5 @@ final class AgentCardController
         }
 
         return rtrim($baseUrl, '/').$url;
-    }
-
-    /** @return array<string, mixed> */
-    private function toA2aSkill(AgentSkill $skill): array
-    {
-        return [
-            'id' => $skill->id,
-            'name' => $skill->name,
-            'description' => $skill->description,
-            // `tags` is required. A skill registered without any still gets one
-            // rather than an empty list a strict validator rejects.
-            'tags' => [] !== $skill->tags ? $skill->tags : [$skill->id],
-            'inputModes' => $skill->inputModes,
-            'outputModes' => $skill->outputModes,
-        ];
     }
 }

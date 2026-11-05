@@ -86,20 +86,89 @@ final class KohSyliusA2aBundleTest extends TestCase
         $this->processConfig([['interfaces' => [['protocol_binding' => 'JSONRPC']]]]);
     }
 
-    public function testWithoutInterfacesTheCardIsNeitherServedNorAnnounced(): void
+    public function testByDefaultTheEndpointServesTheCard(): void
     {
         $builder = $this->loadExtension([]);
 
         self::assertSame([], $builder->getParameter('koh_a2a.interfaces'));
-        self::assertFalse($builder->getParameter('koh_a2a.card_served'));
+        self::assertTrue($builder->getParameter('koh_a2a.endpoint.enabled'));
+        self::assertTrue($builder->getParameter('koh_a2a.card_served'));
         self::assertSame(
-            ['%koh_a2a.card_served%'],
+            ['%koh_a2a.card_served%', '%koh_a2a.endpoint.enabled%'],
             array_map('strval', $builder->getDefinition(A2aEndpointProvider::class)->getArguments()),
         );
         self::assertSame(
             '%koh_a2a.interfaces%',
             (string) $builder->getDefinition(AgentCardController::class)->getArgument(5),
         );
+        self::assertSame(
+            '%koh_a2a.endpoint.enabled%',
+            (string) $builder->getDefinition(AgentCardController::class)->getArgument(6),
+        );
+    }
+
+    public function testWithTheEndpointOffAndNoInterfacesTheCardIsNeitherServedNorAnnounced(): void
+    {
+        $builder = $this->loadExtension(['endpoint' => ['enabled' => false]]);
+
+        self::assertFalse($builder->getParameter('koh_a2a.endpoint.enabled'));
+        self::assertFalse($builder->getParameter('koh_a2a.card_served'));
+    }
+
+    public function testTheEndpointDefaults(): void
+    {
+        $config = $this->processConfig([]);
+
+        self::assertSame(
+            ['enabled' => true, 'rate_limit' => 60, 'rate_interval' => '1 minute', 'max_request_bytes' => 65536, 'task_ttl' => 86400],
+            $config['endpoint'],
+        );
+        self::assertNull($config['age_restriction']);
+
+        $builder = $this->loadExtension([]);
+        self::assertSame(60, $builder->getParameter('koh_a2a.endpoint.rate_limit'));
+        self::assertSame('1 minute', $builder->getParameter('koh_a2a.endpoint.rate_interval'));
+        self::assertSame(65536, $builder->getParameter('koh_a2a.endpoint.max_request_bytes'));
+        self::assertSame(86400, $builder->getParameter('koh_a2a.endpoint.task_ttl'));
+        self::assertNull($builder->getParameter('koh_a2a.age_restriction'));
+    }
+
+    public function testTheEndpointSettingsReachTheContainer(): void
+    {
+        $builder = $this->loadExtension([
+            'endpoint' => ['enabled' => true, 'rate_limit' => 10, 'rate_interval' => '10 seconds', 'max_request_bytes' => 2048, 'task_ttl' => 600],
+            'age_restriction' => 18,
+        ]);
+
+        self::assertSame(10, $builder->getParameter('koh_a2a.endpoint.rate_limit'));
+        self::assertSame('10 seconds', $builder->getParameter('koh_a2a.endpoint.rate_interval'));
+        self::assertSame(2048, $builder->getParameter('koh_a2a.endpoint.max_request_bytes'));
+        self::assertSame(600, $builder->getParameter('koh_a2a.endpoint.task_ttl'));
+        self::assertSame(18, $builder->getParameter('koh_a2a.age_restriction'));
+    }
+
+    public function testNonsensicalEndpointLimitsAreRejected(): void
+    {
+        foreach ([['rate_limit' => 0], ['max_request_bytes' => 100], ['task_ttl' => 1]] as $endpoint) {
+            try {
+                $this->processConfig([['endpoint' => $endpoint]]);
+                self::fail('Accepted '.json_encode($endpoint));
+            } catch (InvalidConfigurationException) {
+                $this->addToAssertionCount(1);
+            }
+        }
+        $this->expectException(InvalidConfigurationException::class);
+        $this->processConfig([['age_restriction' => -1]]);
+    }
+
+    public function testTheSkillsAreRegisteredInTheirCardOrder(): void
+    {
+        $builder = $this->loadExtension([]);
+
+        self::assertSame(20, $builder->getDefinition(\Koh\SyliusA2a\Skill\ProductSearchSkill::class)->getTag('koh_a2a.skill')[0]['priority']);
+        self::assertSame(10, $builder->getDefinition(\Koh\SyliusA2a\Skill\ProductDetailSkill::class)->getTag('koh_a2a.skill')[0]['priority']);
+        self::assertTrue($builder->getDefinition(\Koh\SyliusA2a\Controller\JsonRpcController::class)->isPublic());
+        self::assertSame('%kernel.secret%', (string) $builder->getDefinition(\Koh\SyliusA2a\Task\TaskIdCodec::class)->getArgument(0));
     }
 
     public function testConfiguredInterfacesReachTheContainer(): void
@@ -165,7 +234,7 @@ final class KohSyliusA2aBundleTest extends TestCase
     /** Installations that still set the option keep booting; the value is not used. */
     public function testTheRetiredTransportPathIsStillAccepted(): void
     {
-        $builder = $this->loadExtension(['transport_path' => '/_mcp']);
+        $builder = $this->loadExtension(['transport_path' => '/_mcp', 'endpoint' => ['enabled' => false]]);
 
         self::assertFalse($builder->hasParameter('koh_a2a.transport_path'));
         // And it does not turn into an interface: the MCP endpoint is not A2A.

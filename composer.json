@@ -39,7 +39,7 @@
         "koh/dev-sylius": "^1.0",
         "phpstan/extension-installer": "^1.4.3",
         "phpstan/phpstan": "^2.3.5",
-        "phpunit/phpunit": "^11.5.57"
+        "phpunit/phpunit": "^11.5.58"
     },
     "autoload": {
         "psr-4": {

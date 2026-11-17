@@ -1,3 +1,9 @@
+## [1.3.4](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-a2a/compare/v1.3.3...v1.3.4) (2026-11-17)
+
+### :bug: Fixes
+
+* **composer:** point homepage at the package page ([c504e8f](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-a2a/commit/c504e8fafb3db5f330ff58d4da6698bb9b599500))
+
 ## [1.3.3](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-a2a/compare/v1.3.2...v1.3.3) (2026-11-17)
 
 ### :repeat: Chores
